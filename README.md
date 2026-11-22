@@ -1,5 +1,7 @@
 # Do Not Track Me · 自定义指纹与追踪观察
 
+[隐私权政策 / Privacy Policy](PRIVACY_POLICY.md) · [隐私问题反馈](https://github.com/huoji120/donot_track_me_claude/issues)
+
 ## 安装／升级
 
 在 Chrome 125+ 打开 `chrome://extensions`，开启开发者模式，加载本目录。已有旧版时点击扩展的「重新加载」，再刷新原来的所有网页，旧页面已经安装的拦截代码不会自动消失。工具栏弹窗查看访问证据，点击「指纹后台」打开独立配置页面。
