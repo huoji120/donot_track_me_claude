@@ -148,21 +148,18 @@ async function refresh(initial = false) {
     : webrtc.levelOfControl === 'not_controllable' || webrtc.levelOfControl === 'controlled_by_other_extensions'
       ? '当前由浏览器策略或其他扩展控制。' : '当前未限制。';
 
-  const hosts = (tab?.hosts ?? []).slice().sort((a, b) => a.host.localeCompare(b.host));
-  const blocked = [];
-  const other = [];
-  for (const { host, blocks } of hosts) {
-    if (blocks.length) blocked.push([host, blocks.map((block) => block === 'port' ? '端口请求' : '追踪规则').join('、')]);
-    else other.push([host]);
-  }
+  const other = (tab?.hosts ?? []).slice().sort((a, b) => a.host.localeCompare(b.host)).map(({ host }) => [host]);
   const observations = tab?.signals ?? [];
   const fingerprintRows = Object.entries(signals).flatMap(([category, label]) =>
     observations.filter(({ key }) => key === category).map(({ source }) => [label, source]));
   const unsupported = tabId === undefined;
-  $('blocked-count').textContent = unsupported ? '—' : blocked.length;
+  $('blocked-count').textContent = '—';
   $('signals-count').textContent = unsupported ? '—' : new Set(observations.map(({ key }) => key)).size;
   $('other-count').textContent = unsupported ? '—' : other.length;
-  renderList('blocked', blocked, unsupported ? '本页不支持监测' : '未观察到规则拦截。');
+  renderList('blocked', [
+    ['追踪域名规则', settings.enabled && settings.trackers ? '配置已开启' : '配置未开启'],
+    ['本地端口规则', settings.enabled && settings.localPorts ? '配置已开启' : '配置未开启']
+  ], '');
   renderList('signals', fingerprintRows, unsupported ? '本页不支持监测' : !settings.enabled || !rules.observe ? 'API 观察已关闭，刷新后不再安装观察钩子。' : '还没观察到。刚安装？请刷新页面。');
   renderList('other', other, unsupported ? '本页不支持监测' : '未观察到跨主机请求。');
   $('limit').hidden = !tab?.capped;

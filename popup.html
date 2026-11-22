@@ -16,7 +16,7 @@
     </div>
     <p class="site" id="site" title="当前标签页">正在读取当前标签页</p>
     <nav class="metrics" aria-label="跳转到报告">
-      <a class="metric safe" href="#blocked-section"><strong id="blocked-count">—</strong><span>已拦截主机</span></a>
+      <a class="metric safe" href="#blocked-section"><strong id="blocked-count">—</strong><span>拦截明细不可用</span></a>
       <a class="metric inspect" href="#signals-section"><strong id="signals-count">—</strong><span>指纹 API 类别</span></a>
       <a class="metric neutral" href="#other-section"><strong id="other-count">—</strong><span>其他跨主机</span></a>
     </nav>
@@ -42,8 +42,9 @@
       </details>
     </section>
     <section class="panel" id="blocked-section" aria-labelledby="blocked-title">
-      <h2 id="blocked-title"><i class="dot safe"></i>已拦截</h2>
+      <h2 id="blocked-title"><i class="dot safe"></i>网络拦截配置</h2>
       <ul id="blocked" class="results"></ul>
+      <p class="hint">商店版不提供逐请求规则命中明细。这里显示配置状态，不是拦截结果；没有统计不代表没有拦截。</p>
     </section>
     <section class="panel" id="signals-section" aria-labelledby="signals-title">
       <h2 id="signals-title"><i class="dot inspect"></i>指纹相关 API 访问</h2>
@@ -51,10 +52,10 @@
       <ul id="signals" class="results scroll"></ul>
     </section>
     <details class="panel" id="other-section">
-      <summary><i class="dot neutral"></i>其他跨主机请求</summary>
-      <p class="hint">可能是 CDN 或普通资源，不等于追踪器。</p>
+      <summary><i class="dot neutral"></i>跨主机请求观察</summary>
+      <p class="hint">可能是 CDN 或普通资源，不等于追踪器；此列表不判断请求是否被规则拦截。</p>
       <ul id="other" class="results scroll"></ul>
-      <p class="hint" id="limit" hidden>最多显示 100 个主机，优先保留已拦截项。</p>
+      <p class="hint" id="limit" hidden>最多显示 100 个已观察到的跨主机。</p>
     </details>
     <details class="panel" id="settings-section">
       <summary><i class="dot neutral"></i>防护设置 <span id="zone-summary"></span></summary>

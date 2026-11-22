@@ -62,27 +62,15 @@ chrome.webNavigation.onCommitted.addListener(({ tabId, frameId, url, documentLif
 });
 chrome.tabs.onRemoved.addListener((id) => forTab(id, () => null));
 
-function recordHost({ tabId, url, initiator, documentLifecycle }, block = '') {
+function recordHost({ tabId, url, initiator, documentLifecycle }) {
   if (tabId < 0 || (documentLifecycle && documentLifecycle !== 'active')) return;
   const host = hostname(url);
   if (!host) return;
   forTab(tabId, (state) => {
     const pageHost = state.host || hostname(initiator);
-    if (!block && (!pageHost || pageHost === host)) return;
-    const item = state.hosts.find((item) => item.host === host);
-    if (item) {
-      if (!block || item.blocks.includes(block)) return;
-      item.blocks.push(block);
-    } else if (state.hosts.length < MAX_HOSTS) {
-      state.hosts.push({ host, blocks: block ? [block] : [] });
-    } else {
-      if (state.capped && !block) return;
-      state.capped = true;
-      if (block) {
-        const replace = state.hosts.findLastIndex((item) => item.blocks.length === 0);
-        if (replace !== -1) state.hosts[replace] = { host, blocks: [block] };
-      }
-    }
+    if (!pageHost || pageHost === host || state.hosts.some((item) => item.host === host)) return;
+    if (state.hosts.length < MAX_HOSTS) state.hosts.push({ host });
+    else state.capped = true;
     return state;
   });
 }
@@ -90,11 +78,6 @@ function recordHost({ tabId, url, initiator, documentLifecycle }, block = '') {
 chrome.webRequest.onBeforeRequest.addListener((request) => {
   if (request.type !== 'main_frame') recordHost(request);
 }, REQUESTS);
-// Only unpacked extensions receive this event. Do not infer blocks from failed connections.
-chrome.declarativeNetRequest.onRuleMatchedDebug?.addListener(({ rule, request }) => {
-  if (rule.rulesetId === 'privacy_rules' && rule.ruleId === 1) recordHost(request, 'tracker');
-  if (rule.rulesetId === '_dynamic' && rule.ruleId >= 1000 && rule.ruleId < 1100) recordHost(request, 'port');
-});
 
 async function validateZone(input) {
   const zone = String(input ?? '').trim();
