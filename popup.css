@@ -19,8 +19,8 @@ body { margin: 0; width: 416px; }
 h1, h2, p, ul { margin: 0; }
 .hero { padding: 13px 16px 10px; color: #f5f9ff; background: linear-gradient(125deg, #152943, #193b58 70%, #17494d); }
 .brand { display: flex; gap: 11px; align-items: center; }
-.mark { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid #ffffff30; border-radius: 12px; color: #b3f4df; background: #ffffff14; }
-.mark svg { width: 23px; height: 23px; }
+.mark { display: grid; place-items: center; width: 42px; height: 42px; flex: none; }
+.mark img { display: block; width: 42px; height: 42px; }
 .eyebrow { color: #c0d4e8; font-size: 9px; letter-spacing: .15em; font-weight: 700; }
 h1 { font-size: 21px; letter-spacing: .02em; }
 .mode { margin-left: auto; padding: 4px 8px; border-radius: 99px; background: #ffffff18; font-size: 11px; white-space: nowrap; }

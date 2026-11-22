@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Do Not Track Me</title>
+  <desc id="desc">A mint-edged midnight-blue shield with a white letter D.</desc>
+  <defs>
+    <linearGradient id="shield" x1="104" y1="56" x2="398" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#183b58"/>
+      <stop offset="1" stop-color="#0d252f"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="120" y1="72" x2="386" y2="425" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9debd5"/>
+      <stop offset="1" stop-color="#35ac99"/>
+    </linearGradient>
+  </defs>
+  <path d="M256 32 438 94V228c0 115-69 197-182 252C143 425 74 343 74 228V94Z" fill="url(#shield)"/>
+  <path d="m256 53 163 56v119c0 102-60 177-163 229C153 405 93 330 93 228V109Z" fill="none" stroke="url(#edge)" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M169 143h79c77 0 122 43 122 112s-45 112-122 112h-79Zm51 49v126h26c46 0 73-23 73-63s-27-63-73-63Z" fill="#f2fbf8" fill-rule="evenodd"/>
+  <path d="m266 222 29 29-29 29" fill="none" stroke="#8ee1cf" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
