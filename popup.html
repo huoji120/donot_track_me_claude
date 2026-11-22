@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>防指纹与追踪</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js" type="module"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-3.4 7-10V5l-7-3-7 3v7c0 6.6 7 10 7 10Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+      <div><p class="eyebrow">DO NOT TRACK ME</p><h1>网站隐私面板</h1></div>
+      <div id="mode" class="mode">读取中</div>
+    </div>
+    <p class="site" id="site" title="当前标签页">正在读取当前标签页</p>
+    <nav class="metrics" aria-label="跳转到报告">
+      <a class="metric safe" href="#blocked-section"><strong id="blocked-count">—</strong><span>已拦截主机</span></a>
+      <a class="metric inspect" href="#signals-section"><strong id="signals-count">—</strong><span>指纹 API 类别</span></a>
+      <a class="metric neutral" href="#other-section"><strong id="other-count">—</strong><span>其他跨主机</span></a>
+    </nav>
+  </header>
+  <main>
+    <button id="privacy-toggle" class="privacy-toggle" type="button" aria-pressed="false" disabled>正在读取防护开关…</button>
+    <p id="privacy-message" class="hint" role="status" aria-live="polite">一键切换立即保存；保留指纹、站点与独立网络选项。</p>
+    <button id="open-options" class="open-options" type="button"><span>打开指纹配置面板</span><small>功能排查开关 · 指纹列表 · 主机绑定 · 手动编辑</small></button>
+    <p id="active-profile" class="hint" role="status" aria-live="polite">正在读取当前站点的指纹配置…</p>
+    <p id="feature-rules-note" class="hint" role="status" aria-live="polite">正在读取功能排查开关…</p>
+    <section class="panel worker-panel" aria-labelledby="worker-title">
+      <h2 id="worker-title"><i class="dot neutral"></i>Worker 同步 <span class="worker-optional">手动 / 按站点 / 全部</span></h2>
+      <label class="worker-mode" for="worker-auto-mode">同步范围<select id="worker-auto-mode" disabled><option value="all">所有网页自动（默认）</option><option value="sites">指定网站自动</option><option value="manual">仅手动启动</option></select></label>
+      <p class="hint">选择后立即保存，仅接管 HTTP/HTTPS 网页，可能刷新匹配标签页。指定网站列表在配置面板中填写；Worker 排查开关关闭时保留模式，但不能启动。</p>
+      <p class="hint worker-debug-notice">开启同步后，Chrome 可能显示“此扩展正在调试此浏览器”的提示条；这是调试连接提示，不是网站报错。</p>
+      <p id="worker-state" class="hint" role="status" aria-live="polite">正在读取同步状态…</p>
+      <p id="worker-auto-state" class="hint" role="status" aria-live="polite"></p>
+      <div class="buttons"><button id="worker-start" type="button" disabled>启动同步</button><button id="worker-stop" type="button" disabled>停止同步</button></div>
+      <p id="worker-message" class="hint" role="status" aria-live="polite"></p>
+      <details class="worker-help"><summary>范围与注意事项</summary>
+        <p class="hint">启动会连接调试器，然后刷新当前页。同步 Dedicated Worker（classic / module / blob 及嵌套 Worker）的语言、时区、CPU 和内存。页面与 Worker 共用 Date 子类时区算法，不重复安装页面时区。不保证 SharedWorker / ServiceWorker 同步。</p>
+        <p class="hint">Chrome 会显示调试提示；DevTools 可能冲突。停止将暂停此标签页的自动同步，跨刷新、导航与后台重启保持，直到手动启动或关闭标签页。外部断开不立即重试。保存设置或指纹库会停止同步；自动模式可在下次导航或刷新恢复，手动模式需重新启动。已执行的修改可能需刷新才能清除。</p>
+      </details>
+    </section>
+    <section class="panel" id="blocked-section" aria-labelledby="blocked-title">
+      <h2 id="blocked-title"><i class="dot safe"></i>已拦截</h2>
+      <ul id="blocked" class="results"></ul>
+    </section>
+    <section class="panel" id="signals-section" aria-labelledby="signals-title">
+      <h2 id="signals-title"><i class="dot inspect"></i>指纹相关 API 访问</h2>
+      <p class="hint">只表示观察到访问，不代表已拦截或已替换。观察功能本身会安装钩子，也可在功能排查中关闭；旧记录和钩子可能保留到刷新。</p>
+      <ul id="signals" class="results scroll"></ul>
+    </section>
+    <details class="panel" id="other-section">
+      <summary><i class="dot neutral"></i>其他跨主机请求</summary>
+      <p class="hint">可能是 CDN 或普通资源，不等于追踪器。</p>
+      <ul id="other" class="results scroll"></ul>
+      <p class="hint" id="limit" hidden>最多显示 100 个主机，优先保留已拦截项。</p>
+    </details>
+    <details class="panel" id="settings-section">
+      <summary><i class="dot neutral"></i>防护设置 <span id="zone-summary"></span></summary>
+      <form id="settings">
+        <fieldset disabled>
+          <label class="toggle"><input id="webrtc" type="checkbox"> 限制 WebRTC 非代理 UDP（立即保存）</label>
+          <small id="rtc-state"></small>
+          <label for="zone">自定义时区 <span>留空跟随系统</span></label>
+          <input id="zone" list="zones" placeholder="例如 Asia/Shanghai" maxlength="80" autocomplete="off" spellcheck="false">
+          <datalist id="zones"></datalist>
+          <div class="buttons"><button type="submit">保存时区</button><button id="reload" type="button">刷新当前页</button></div>
+        </fieldset>
+        <p id="status" role="status" aria-live="polite"></p>
+      </form>
+    </details>
+  </main>
+</body>
+</html>

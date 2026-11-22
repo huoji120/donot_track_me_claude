@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>hCaptcha 本地对比测试</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">LOCAL DIAGNOSTIC</p><h1>hCaptcha 对比测试</h1><p>真实验证码、真实后端验证。此页面不会自动完成挑战。</p></header>
+    <section class="notice"><strong>先区分加载失败与验证失败</strong><p>插件关闭与开启时分别刷新本页，保持同一网络、同一 sitekey，每轮重新完成验证码。不要短时间频繁刷新。不同网站的 hCaptcha 策略和其他风控可能不同，本页通过不代表其他网站一定放行。</p><p>hCaptcha 后台若限制域名，请允许 <code>hcaptcha.test</code>。localhost 和 127.0.0.1 不能直接用于验证码。</p></section>
+    <div class="grid">
+      <section class="card">
+        <h2>手动完成验证码</h2>
+        <p id="config-status" class="muted" role="status">正在读取本地配置…</p>
+        <form id="challenge-form" method="POST" action="/verify">
+          <div id="captcha" class="h-captcha"></div>
+          <p id="client-status" role="status" aria-live="polite">等待加载 hCaptcha SDK…</p>
+          <div class="actions"><button id="verify" type="submit" disabled>提交后端验证</button><button id="reset" type="button" class="secondary" disabled>重新获取验证码</button></div>
+        </form>
+        <p class="muted">收到前端 token 不等于验证成功，必须提交后端。token 不显示、不写日志；每个 token 只能使用一次。</p>
+        <p class="muted">后端仅发送 sitekey、secret、真实 token；不把本机回环 IP 或示例 IP 冒充你的公网 IP。</p>
+      </section>
+      <section class="card">
+        <h2>验证结果</h2>
+        <p id="verdict" role="status" aria-live="polite">尚未提交</p>
+        <pre id="result">等待你手动完成挑战并提交。</pre>
+        <h3>事件记录</h3>
+        <ol id="events" class="events"></ol>
+        <p class="muted">记录仅保留在当前页面内存中。SDK 错误会显示为客户端错误；后端网络异常不会伪装成验证码失败。</p>
+      </section>
+    </div>
+    <footer>本地页面不读取 Cookie、账户信息或安装扩展列表；hCaptcha 自身会按其隐私政策处理验证数据。</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "requestDomains": ["doubleclick.net", "google-analytics.com", "googletagmanager.com", "googleadservices.com", "googlesyndication.com", "connect.facebook.net", "analytics.twitter.com", "bat.bing.com", "hotjar.com", "hotjar.io", "clarity.ms", "scorecardresearch.com", "quantserve.com", "adsrvr.org", "adnxs.com", "taboola.com", "outbrain.com", "criteo.com", "criteo.net", "cnzz.com", "hm.baidu.com", "zz.bdstatic.com", "sensorsdata.cn", "umeng.com", "umengcloud.com", "cloud.umami.is", "static.cloudflareinsights.com"],
+      "domainType": "thirdParty",
+      "excludedResourceTypes": ["main_frame"]
+    }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": { "type": "modifyHeaders", "requestHeaders": [
+      { "header": "DNT", "operation": "set", "value": "1" },
+      { "header": "Sec-GPC", "operation": "set", "value": "1" }
+    ] },
+    "condition": { "regexFilter": "^https?://", "resourceTypes": ["main_frame", "sub_frame", "stylesheet", "script", "image", "font", "object", "xmlhttprequest", "ping", "csp_report", "media", "webtransport", "webbundle", "other"] }
+  }
+]

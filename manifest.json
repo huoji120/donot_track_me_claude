@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Do Not Track Me · 指纹与追踪防护",
+  "version": "2.6.2",
+  "minimum_chrome_version": "125",
+  "description": "自定义浏览器指纹替换、一键生成档案与网站追踪观察；媒体 API 保持可用。",
+  "permissions": ["storage", "scripting", "activeTab", "privacy", "webRequest", "webNavigation", "declarativeNetRequest", "declarativeNetRequestFeedback", "debugger"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_popup": "popup.html" },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["observe.js"],
+    "run_at": "document_start",
+    "all_frames": true,
+    "match_origin_as_fallback": true
+  }],
+  "declarative_net_request": {
+    "rule_resources": [{ "id": "privacy_rules", "enabled": true, "path": "rules.json" }]
+  }
+}

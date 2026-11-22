@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>指纹配置 · Do Not Track Me</title>
+  <link rel="stylesheet" href="options.css">
+  <script src="options.js" type="module"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="brand" href="#overview"><span class="brand-mark" aria-hidden="true">D</span><span>DO NOT TRACK ME<small>你的浏览器，你的配置</small></span></a>
+      <nav aria-label="设置导航"><a href="#overview">配置概览</a><a href="#feature-rules">功能排查开关</a><a href="#library-section">指纹列表与站点绑定</a><a href="#identity">设备与图形</a><a href="#rendering">渲染与字体</a><a href="#network">独立网络防护</a><a href="#worker-sync">可选 Worker 同步</a></nav>
+      <p class="sidebar-note">替换指纹，不伪装能力缺失。<br>不会把 API 访问记录当作已阻止追踪的证据。</p>
+    </aside>
+    <main id="overview">
+      <header class="hero"><div><p class="eyebrow">PRIVACY / PROFILE STUDIO</p><h1>让指纹由你定义。</h1><p>手动调整，或生成一组设备参数。保留浏览器原生 API 能力。</p></div><span id="mode" class="badge">读取配置中</span></header>
+      <section class="card diagnostic-card" id="feature-rules" aria-labelledby="feature-rules-title">
+        <div class="section-heading"><div><p class="eyebrow">DIAGNOSTICS / INSTANT SAVE</p><h2 id="feature-rules-title">功能排查开关</h2></div><span class="tag">点击立即保存</span></div>
+        <p class="help">独立于下方编辑草稿，对默认配置和已绑定站点均生效；不改写档案、种子、时区、站点绑定或自动同步模式。</p>
+        <p class="notice">开启按已保存参数生效：时区留空、CPU / 内存为 0、字体为 native、档案 Canvas / 音频关闭时，开启对应开关不会凭空生成替换参数。全局防护关闭时，下列规则均不生效。</p>
+        <p class="help">默认配置：屏幕尺寸替换、WebGL 标识替换、指纹 API 观察、语言替换关闭，其余规则开启。“重置为默认配置”仅恢复这组开关，保留档案参数、站点绑定、自动同步模式和总开关；网络拦截与 WebRTC 限制也会开启。</p>
+        <p class="notice">上述四项会改写或包装网页 JS 接口。要避免这类 JS 包装，需要指纹浏览器等浏览器级支持；普通扩展不能同时保证自定义读数与接口完全原生。这不表示其他替换项完全原生，也不保证指纹浏览器不可检测。</p>
+        <fieldset id="feature-rule-controls" disabled>
+          <div class="action-buttons"><button id="rules-all-off" type="button" class="secondary">全部关闭（基线）</button><button id="rules-reset-defaults" type="button" class="secondary">重置为默认配置</button></div>
+          <div id="feature-rule-list" class="rule-list"></div>
+        </fieldset>
+        <p class="help">“只开此项”会关闭其他所有排查项，包括独立网络防护；不会打开全局防护。API 观察本身会安装包装钩子，也可能是故障原因。仅开 Worker 同步时，身份字段仍为原生；沿用当前自动 / 手动模式，手动模式可能还需在目标页弹窗启动同步。全部关闭并刷新后，不再启用本扩展的页面 API 改写、请求头改写、调试同步和请求拦截；扩展仍已安装，隔离环境通信和网络观察可能保留，不等同于卸载。</p>
+        <p id="feature-rule-summary" class="help" aria-live="polite">正在读取已保存开关…</p>
+        <p id="feature-rule-status" class="status" role="status" aria-live="polite">排查每一步都请刷新测试页；刷新前可能保留旧缓存值和旧钩子。全部关闭后的基线也必须刷新。</p>
+      </section>
+      <form id="settings">
+        <fieldset id="controls" disabled>
+          <section class="card overview-card" aria-labelledby="overview-title">
+            <div class="section-heading"><div><p class="eyebrow">01 / GENERAL</p><h2 id="overview-title">全局与时区</h2></div><label class="switch"><input id="enabled" type="checkbox"><span>启用防护</span></label></div>
+            <div class="field"><label for="zone">替换时区</label><input id="zone" list="zones" placeholder="默认 Asia/Singapore；清空使用系统时区" maxlength="80" autocomplete="off" spellcheck="false"><datalist id="zones"></datalist><small>首次使用默认新加坡 Asia/Singapore（UTC+8），已有时区选择保留；主动清空则使用系统时区。改变时区或全局开关后，请刷新已打开的网站。</small></div>
+            <div class="field"><label for="languages">语言列表 / Languages</label><input id="languages" placeholder="en-US,en" maxlength="810" autocomplete="off" spellcheck="false"><small>默认英语 en-US,en。按优先级以逗号分隔，例如 zh-CN,zh,en；最多 10 项。替换支持的页面语言、默认 Intl 区域与 HTTP Accept-Language。留空跟随浏览器；可随档案绑定不同网站。</small></div>
+            <div class="notice">未保存过同步模式时，默认自动连接所有 HTTP(S) 网页；已保存模式保持不变，且受全局防护与 Worker 排查开关控制。可在目标页弹窗调整<a href="#worker-sync">Worker 同步</a>，覆盖受支持的 Dedicated Worker 参数，不保证所有 Worker 一致。页面配置异步应用，最早的同步脚本可能读到原值。每次保存后都建议刷新受影响网站，以清除旧值和旧 API 引用；刷新也不能消除页面启动时的异步窗口。浏览器内部页等受限页面不支持注入。</div>
+          </section>
+          <section class="card" id="library-section" aria-labelledby="library-title">
+            <div class="section-heading"><div><p class="eyebrow">PROFILE LIBRARY</p><h2 id="library-title">指纹列表与站点绑定</h2></div><span id="profile-count" class="tag">0 条记录</span></div>
+            <p class="help">每次生成都新增一条独立记录。绑定后，同一主机持续使用指定记录；未绑定站点使用默认配置。绑定不自动扩展到子域名。</p>
+            <div class="field-grid"><div class="field"><label for="profile-list">已保存的指纹</label><select id="profile-list"><option value="">选择一条记录</option></select></div><div class="field"><label for="profile-name">记录名称</label><input id="profile-name" maxlength="80" placeholder="例如 工作 / 常用站点"></div></div>
+            <div class="library-buttons action-buttons"><button id="load-profile" type="button" class="quiet">载入编辑区</button><button id="update-profile" type="button" class="secondary">保存到所选记录</button><button id="save-copy" type="button" class="quiet">当前参数另存为新记录</button><button id="generate-record" type="button" class="secondary">随机生成新记录</button><button id="delete-profile" type="button" class="quiet">删除所选记录</button></div>
+            <p class="help" id="editing">编辑区当前为默认配置。载入记录只修改编辑草稿；保存到所选记录不会修改默认配置。</p>
+            <div class="field-grid"><div class="field"><label for="hostname">绑定主机名</label><input id="hostname" placeholder="例如 example.com" autocomplete="off" spellcheck="false"><small>只填主机名，不填协议、路径或端口。</small></div><div class="field"><label for="binding-profile">使用哪条指纹</label><select id="binding-profile"><option value="">选择一条记录</option></select></div></div>
+            <div class="library-buttons"><button id="bind-profile" type="button" class="secondary">保存站点绑定</button></div>
+            <ul id="bindings" class="bindings" aria-label="已保存的站点绑定"></ul>
+            <p class="help">每次保存、绑定、解绑或修改记录后都建议刷新受影响的网站，以清除旧值和旧 API 引用。删除记录也会解除其全部站点绑定。这些操作会停止活动 Worker 同步；自动模式可在下次导航或刷新时恢复，手动模式需重新启动。</p>
+          </section>
+          <section class="card" id="identity" aria-labelledby="identity-title">
+            <div class="section-heading"><div><p class="eyebrow">02 / DEVICE IDENTITY</p><h2 id="identity-title">设备与图形</h2></div><span class="tag">可手动编辑</span></div>
+            <div class="field"><label for="seed">稳定种子</label><input id="seed" required maxlength="128" autocomplete="off" spellcheck="false"><small>按页面 origin 通过 HMAC 派生渲染种子；不会在每次读取时重新随机，也不向页面传递原始种子。种子不代表匿名身份。</small></div>
+            <div class="field-grid">
+              <div class="field"><label for="cpu">CPU 逻辑核心数</label><input id="cpu" type="number" min="0" max="128" step="1" required><small>0 = 原生值；替换 hardwareConcurrency。</small></div>
+              <div class="field"><label for="memory">设备内存 / GB</label><input id="memory" type="number" min="0" max="128" step="1" required><small>0 = 原生值；替换 deviceMemory，不增加 API 支持。</small></div>
+              <div class="field"><label for="width">屏幕宽度 / CSS px</label><input id="width" type="number" min="0" max="16384" step="1" required></div>
+              <div class="field"><label for="height">屏幕高度 / CSS px</label><input id="height" type="number" min="0" max="16384" step="1" required></div>
+            </div>
+            <p class="help">宽高必须同时为 0（原生）或同时填写正整数。修改读取值不改变窗口实际尺寸。</p>
+            <div class="field-grid">
+              <div class="field"><label for="gpuVendor">GPU 厂商</label><input id="gpuVendor" maxlength="200" placeholder="留空使用原生值" spellcheck="false"></div>
+              <div class="field"><label for="gpuRenderer">GPU 渲染器</label><input id="gpuRenderer" maxlength="200" placeholder="留空使用原生值" spellcheck="false"></div>
+            </div>
+            <p class="help">只替换可读取的 WebGL 标识，不禁用 WebGL / WebGPU，也不伪造不支持状态；WebGPU 和 GPU 能力仍为原生值。随机生成仅选择参数组合，不是完整硬件或浏览器模拟，不改变 UA 或操作系统，也无法保证所有读数一致或免于验证码。</p>
+          </section>
+          <section class="card" id="rendering" aria-labelledby="rendering-title">
+            <div class="section-heading"><div><p class="eyebrow">03 / RENDERING</p><h2 id="rendering-title">渲染与字体</h2></div></div>
+            <label class="setting-row"><span><strong>Canvas 文本稳定微扰</strong><small>仅在 fillText / strokeText 绘制时按稳定种子施加亚像素偏移。不在 getImageData 或导出时额外修改像素，读回实际绘制图像；纯填色、清除和路径像素保持原生，等价读回调用保持一致。</small></span><input id="canvas" type="checkbox"></label>
+            <label class="setting-row"><span><strong>音频分析器微扰</strong><small>默认关闭，保持原生音频。可选：仅对 analyser 读取结果加入极小噪声，不禁用音频 API。</small></span><input id="audio" type="checkbox"></label>
+            <div class="field"><label for="font">页面字体替换</label><select id="font"><option value="native">原生 · 保留网站字体</option><option value="sans-serif">sans-serif · 无衬线</option><option value="serif">serif · 衬线</option><option value="monospace">monospace · 等宽</option></select><small>通用字体选项会实际改变页面可见文字，不隐藏本机已安装字体或字体 API。可能影响排版、图标字体；Shadow DOM 与页面 CSS 的覆盖范围有限，无法保证所有文字一致。</small></div>
+          </section>
+          <section class="card" id="network" aria-labelledby="network-title">
+            <div class="section-heading"><div><p class="eyebrow">04 / OPTIONAL NETWORK PROTECTION</p><h2 id="network-title">独立网络防护</h2></div><span class="tag">按需开启</span></div>
+            <p class="help">以下是独立的网络限制，不是指纹替换。与上方排查开关是同一设置，点击立即保存，不随默认参数表单重复保存。新版默认及重置默认时均开启，已有手动选择保留；可能影响正常资源、本地服务或通话。</p>
+            <label class="setting-row"><span><strong>追踪域名规则</strong><small>拦截规则覆盖的域名；可能影响登录、媒体或第三方资源。</small></span><input id="trackers" type="checkbox"></label>
+            <label class="setting-row"><span><strong>本地端口请求规则</strong><small>按扩展规则拦截部分本地地址端口请求；并非全端口防火墙，可能影响本地应用。</small></span><input id="localPorts" type="checkbox"></label>
+            <label class="setting-row"><span><strong>限制 WebRTC 非代理 UDP</strong><small>规则默认开启。此浏览器策略可能影响视频通话，不等于禁用 WebRTC API。</small></span><input id="webrtc" type="checkbox"></label>
+            <p class="help" id="rtc-state"></p>
+          </section>
+          <footer class="actions">
+            <div class="action-buttons"><button id="save" class="primary" type="submit">保存并设为默认</button><button id="generate" class="secondary" type="button">生成新记录并应用为默认</button><button id="native" class="quiet" type="button">默认指纹恢复原生</button></div>
+            <p>生成并应用会新增记录并替换默认种子、CPU、内存、屏幕与 GPU；保留已保存的时区、功能开关和编辑区语言、渲染选项。恢复原生只恢复默认指纹参数，并清空默认语言与时区；不修改已有记录、站点绑定或功能开关，API 观察和隐私信号仍可能安装钩子。要建立无 API 改写的排查基线，请使用上方“全部关闭（基线）”并刷新测试页。</p>
+          </footer>
+        </fieldset>
+      </form>
+      <p id="status" class="status" role="status" aria-live="polite">正在连接扩展后台…</p>
+      <section class="card worker-card" id="worker-sync" aria-labelledby="worker-title">
+        <div class="section-heading"><div><p class="eyebrow">OPTIONAL / DEBUGGER</p><h2 id="worker-title">Worker 同步</h2></div><span class="tag">Chrome 125+</span></div>
+        <p class="help">扩展声明 debugger 调试权限，未保存过同步模式时默认自动连接所有 HTTP(S) 网页；已保存的选择保持不变。可在工具栏弹窗直接切换模式，或在下方配置网站列表。同步 Dedicated Worker 的语言、时区、CPU 和内存，支持 classic、module、blob 及嵌套 Worker。页面与 Worker 使用同一套 Date 子类时区算法；调试路径只给 Worker 安装时区，不重复修改页面。不保证 SharedWorker / ServiceWorker 或所有指纹读数一致。</p>
+        <form id="worker-auto-form">
+          <fieldset id="worker-auto-controls" disabled>
+            <div class="field"><label for="worker-auto-mode">调试同步模式</label><select id="worker-auto-mode"><option value="all">所有 HTTP(S) 网站自动启动（默认）</option><option value="sites">仅指定网站自动启动</option><option value="manual">仅手动启动</option></select></div>
+            <div class="field"><label for="worker-auto-hosts">自动同步网站（每行一个，最多 200 行）</label><textarea id="worker-auto-hosts" rows="7" maxlength="100000" placeholder="example.com&#10;https://例子.中国:8443/path" autocomplete="off" spellcheck="false"></textarea><small>可填主机名或 HTTP(S) URL；国际域名会规范化。精确匹配主机，不包含子域名；忽略端口、路径、查询和片段。不支持凭据、通配符、非 HTTP(S) 地址。此列表与指纹档案的站点绑定独立。</small></div>
+            <p class="notice">保存立即应用到已打开的符合条件标签页及后续访问。启动会刷新页面；“所有网站”可能同时刷新多个标签页。内部页不会连接；全局防护或 Worker 排查开关关闭时不自动启动，但仍可保存模式。切换模式或移除主机只停止不再符合条件的自动会话，不停止独立手动会话。</p>
+            <button type="submit" class="secondary">单独保存同步模式</button>
+          </fieldset>
+          <p id="worker-auto-status" class="status" role="status" aria-live="polite">正在读取同步模式…</p>
+        </form>
+        <ol id="worker-instructions" class="help worker-instructions"><li>切换到目标网页，打开工具栏弹窗。</li><li>点击“启动同步”将清除该标签页的自动暂停，并在连接后刷新该页。</li><li>点击“停止同步”会暂停该标签页的自动同步，跨刷新、导航和后台重启保持，直到手动启动或关闭标签页。</li></ol>
+        <div class="notice">Chrome 会显示调试提示；DevTools 或其他调试器可能冲突。外部断开不立即重试，后续导航可恢复自动同步。停止不会撤销已经执行的修改，请刷新页面。保存设置或指纹库会停止活动同步；自动模式可在下次导航或刷新时恢复，手动模式需重新启动。</div>
+      </section>
+      <p class="footnote">减少部分读取值的暴露不代表无法被识别，也不保证免于验证码。账户、IP、Cookie 与行为仍可能关联访问。</p>
+    </main>
+  </div>
+</body>
+</html>
